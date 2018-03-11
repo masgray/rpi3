@@ -1,0 +1,6 @@
+*.user
+[Tt]humbs.db
+*.DS_Store
+*.bak
+*.pyc
+build/
