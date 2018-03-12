@@ -13,7 +13,7 @@ constexpr int LED = 0;
 
 std::atomic<bool> LedOn(false);
 
-void LedLoop()
+void LedLoop(std::atomic<bool>& stop)
 {
     int i = 0;
     if (!LedOn)
@@ -26,22 +26,36 @@ void LedLoop()
     for (i = 0; i <= 100; ++i)
     {
         softPwmWrite(LED, i);
+        if (stop)
+            break;
         delay(10);
     }
-    delay(50);
+    if (!stop)
+        delay(50);
 
     for (i = 100; i >= 0; --i)
     {
         softPwmWrite(LED, i);
+        if (stop)
+            break;
         delay(10);
     }
-    delay(10);
+    if (!stop)
+        delay(10);
+
+    if (stop)
+        softPwmWrite(LED, 0);
 }
 
-void OnOffLoop()
+void OnOffLoop(std::atomic<bool>& stop)
 {
     LedOn = !LedOn;
-    delay(5000);
+    for (int i = 1; i < 60; ++i)
+    {
+        if (stop)
+            break;
+        delay(100);
+    }
 }
 
 void setup(Tasks& tasks)
